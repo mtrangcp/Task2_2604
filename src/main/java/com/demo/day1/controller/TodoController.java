@@ -34,7 +34,7 @@ public class TodoController {
     public String editForm(@PathVariable Long id, Model model,  RedirectAttributes redirectAttributes) {
         Optional<Todo> optionalTodo = todoRepository.findById(id);
         if (optionalTodo.isEmpty()) {
-            redirectAttributes.addFlashAttribute("mess", "Không tìm thấy Todo!");
+            redirectAttributes.addFlashAttribute("message", "Không tìm thấy Todo!");
             return "redirect:/";
         }
 
@@ -44,19 +44,33 @@ public class TodoController {
 
     @PostMapping("/add")
     public String add(@Valid @ModelAttribute("todo") Todo todo,
-                      BindingResult result,  Model model) {
+                      BindingResult result,  Model model,
+                      RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             model.addAttribute("todo", todo);
             return "add";
         }
 
+        boolean isUpdate = (todo.getId() != null);
         todoRepository.save(todo);
+
+        if (isUpdate) {
+            redirectAttributes.addFlashAttribute("message", "Sửa thành công!");
+        } else {
+            redirectAttributes.addFlashAttribute("message", "Thêm mới thành công!");
+        }
+
         return "redirect:/";
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
+    public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        if ( !todoRepository.existsById(id)) {
+            redirectAttributes.addFlashAttribute("message", "Todo không tồn tại!");
+            return "redirect:/";
+        }
         todoRepository.deleteById(id);
+        redirectAttributes.addFlashAttribute("message", "Xóa thành công!");
         return "redirect:/";
     }
 }

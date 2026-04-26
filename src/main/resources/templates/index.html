@@ -16,9 +16,10 @@ xmlns:th="http://www.thymeleaf.org">
 <div class="container">
     <h3 class="text-center">List Todos</h3> <br>
 
-    <div th:if="${mess}" class="alert alert-success">
-        <span th:text="${mess}"></span>
+    <div th:if="${message}" class="alert alert-success">
+        <span th:text="${message}"></span>
     </div>
+    <br>
     <a th:href="@{/add}" class="btn btn-primary">Add</a>
 
     <table class="table table-striped table-bordered">
